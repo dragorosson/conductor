@@ -47,7 +47,7 @@ public class PollingSemaphoreTest {
 
         allFutures.get();
 
-        assertEquals(0, pollingSemaphore.availableThreads());
+        assertEquals(0, pollingSemaphore.availableSlots());
         assertFalse(pollingSemaphore.canPoll());
 
         executorService.shutdown();
@@ -72,10 +72,10 @@ public class PollingSemaphoreTest {
                         futuresList.toArray(new CompletableFuture[futuresList.size()]));
         allFutures.get();
 
-        assertEquals(0, pollingSemaphore.availableThreads());
-        pollingSemaphore.complete();
+        assertEquals(0, pollingSemaphore.availableSlots());
+        pollingSemaphore.complete(1);
 
-        assertTrue(pollingSemaphore.availableThreads() > 0);
+        assertTrue(pollingSemaphore.availableSlots() > 0);
         assertTrue(pollingSemaphore.canPoll());
 
         executorService.shutdown();
