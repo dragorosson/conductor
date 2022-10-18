@@ -162,9 +162,13 @@ class TaskPollExecutor {
                             .record(
                                     () ->
                                             taskClient.batchPollTasksInDomain(
-                                                    taskType, worker.getIdentity(), domain, slotsToAcquire, worker.getBatchPollTimeoutInMS()));
+                                                    taskType,
+                                                    worker.getIdentity(),
+                                                    domain,
+                                                    slotsToAcquire,
+                                                    worker.getBatchPollTimeoutInMS()));
             acquiredTasks = tasks.size();
-            for (Task task: tasks) {
+            for (Task task : tasks) {
                 if (Objects.nonNull(task) && StringUtils.isNotBlank(task.getTaskId())) {
                     MetricsContainer.incrementTaskPollCount(taskType, 1);
                     LOGGER.debug(
@@ -176,7 +180,8 @@ class TaskPollExecutor {
 
                     CompletableFuture<Task> taskCompletableFuture =
                             CompletableFuture.supplyAsync(
-                                    () -> processTask(task, worker, pollingSemaphore), executorService);
+                                    () -> processTask(task, worker, pollingSemaphore),
+                                    executorService);
 
                     if (task.getResponseTimeoutSeconds() > 0 && worker.leaseExtendEnabled()) {
                         ScheduledFuture<?> leaseExtendFuture =

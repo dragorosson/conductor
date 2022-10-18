@@ -39,7 +39,8 @@ public class PollingSemaphoreTest {
                         t ->
                                 futuresList.add(
                                         CompletableFuture.runAsync(
-                                                pollingSemaphore::canPoll, executorService)));
+                                                () -> pollingSemaphore.acquireSlots(1),
+                                                executorService)));
 
         CompletableFuture<Void> allFutures =
                 CompletableFuture.allOf(
@@ -48,7 +49,7 @@ public class PollingSemaphoreTest {
         allFutures.get();
 
         assertEquals(0, pollingSemaphore.availableSlots());
-        assertFalse(pollingSemaphore.canPoll());
+        assertFalse(pollingSemaphore.acquireSlots(1));
 
         executorService.shutdown();
     }
@@ -65,7 +66,8 @@ public class PollingSemaphoreTest {
                         t ->
                                 futuresList.add(
                                         CompletableFuture.runAsync(
-                                                pollingSemaphore::canPoll, executorService)));
+                                                () -> pollingSemaphore.acquireSlots(1),
+                                                executorService)));
 
         CompletableFuture<Void> allFutures =
                 CompletableFuture.allOf(
@@ -76,7 +78,7 @@ public class PollingSemaphoreTest {
         pollingSemaphore.complete(1);
 
         assertTrue(pollingSemaphore.availableSlots() > 0);
-        assertTrue(pollingSemaphore.canPoll());
+        assertTrue(pollingSemaphore.acquireSlots(1));
 
         executorService.shutdown();
     }
